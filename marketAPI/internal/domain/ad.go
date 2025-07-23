@@ -10,7 +10,7 @@ type Ad struct {
 	Description string    `json:"description" db:"description"`
 	ImageURL    string    `json:"image_url" db:"image_url"`
 	Price       float64   `json:"price" db:"price"`
-	UserID      int       `json:"-" db:"user_id"` // Мб сделать через id google
+	UserID      int       `json:"-" db:"user_id"`
 	CreatedAt   time.Time `json:"created_at" db:"created_at"`
 	//Для ответа:
 	Username string `json:"username,omitempty"`

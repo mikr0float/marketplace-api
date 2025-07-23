@@ -69,6 +69,26 @@ func (r *UserRepository) GetByUsername(ctx context.Context, username string) (*d
 	return &user, err
 }
 
+func (r *UserRepository) GetByID(ctx context.Context, id int) (*domain.User, error) {
+	sess, err := r.storage.NewSession(ctx)
+	if err != nil {
+		log.Printf("Failed to start session: %v", err)
+		return nil, err
+	}
+
+	var user domain.User
+	err = sess.Select("*").
+		From("users").
+		Where("id = ?", id).
+		LoadOne(&user)
+
+	if errors.Is(err, dbr.ErrNotFound) {
+		return nil, err
+	}
+
+	return &user, err
+}
+
 func (r *UserRepository) Exists(ctx context.Context, username string) (bool, error) {
 	sess, err := r.storage.NewSession(ctx)
 	if err != nil {
