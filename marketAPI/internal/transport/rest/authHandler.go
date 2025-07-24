@@ -105,3 +105,29 @@ func (h *Handlers) Login(c echo.Context) error {
 		Token: token,
 	})
 }
+
+// HealthCheck godoc
+// @Summary Проверка работоспособности сервиса
+// @Description Возвращает статус работы API и подключения к БД
+// @Tags service
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} map[string]string "Сервис работает"
+// @Router /health [get]
+func (h *Handlers) HealthCheck(c echo.Context) error {
+	// Можно добавить проверку подключения к БД
+	response := map[string]interface{}{
+		"status":  "ok",
+		"service": "marketplace-api",
+	}
+
+	err := h.authService.CheckDB(c.Request().Context())
+	if err != nil {
+		response["db"] = "disconnected"
+		response["db_error"] = err.Error()
+	} else {
+		response["db"] = "connected"
+	}
+
+	return c.JSON(http.StatusOK, response)
+}

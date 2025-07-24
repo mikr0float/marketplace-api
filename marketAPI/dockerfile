@@ -16,7 +16,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o marketplace ./cmd/api
 # Минимальный образ для запуска приложения
 FROM alpine:3.21.3
 
-WORKDIR /root/
+WORKDIR /app
 
 RUN apk --no-cache add ca-certificates tzdata && \
     addgroup -S appgroup && adduser -S appuser -G appgroup

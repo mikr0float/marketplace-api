@@ -106,3 +106,7 @@ func (s *Service) ValidateToken(tokenString string) (int, error) {
 func (s *Service) GetSecret() string {
 	return s.tokenSecret
 }
+
+func (s *Service) CheckDB(ctx context.Context) error {
+	return s.userRepo.PingDB(ctx)
+}

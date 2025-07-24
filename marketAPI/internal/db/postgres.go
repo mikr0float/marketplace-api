@@ -2,8 +2,10 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/gocraft/dbr/v2"
@@ -45,4 +47,43 @@ func (s *PostgresStorage) NewSession(ctx context.Context) (*dbr.Session, error) 
 
 func (s *PostgresStorage) Close() error {
 	return s.conn.Close()
+}
+
+func ApplyMigrations(dsn string) error {
+	log.Println("Checking database migrations...")
+
+	// Читаем SQL-файл миграций
+	migrationSQL, err := os.ReadFile("migrations/001_init.up.sql")
+	if err != nil {
+		return fmt.Errorf("failed to read migrations: %w", err)
+	}
+
+	// Подключаемся к БД
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	db, err := sql.Open("postgres", dsn)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	// Проверяем соединение
+	if err := db.PingContext(ctx); err != nil {
+		return err
+	}
+
+	// Выполняем миграцию в транзакции
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	if _, err := tx.ExecContext(ctx, string(migrationSQL)); err != nil {
+		return err
+	}
+
+	log.Println("Migrations applied successfully")
+	return tx.Commit()
 }

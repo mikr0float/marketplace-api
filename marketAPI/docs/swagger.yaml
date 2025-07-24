@@ -267,6 +267,23 @@ paths:
       summary: Register new user
       tags:
       - auth
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает статус работы API и подключения к БД
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Сервис работает
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Проверка работоспособности сервиса
+      tags:
+      - service
 securityDefinitions:
   ApiKeyAuth:
     in: header

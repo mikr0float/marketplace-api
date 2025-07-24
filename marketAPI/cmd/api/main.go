@@ -1,3 +1,13 @@
+package main
+
+import (
+	"log"
+	"marketAPI/internal/app"
+	"marketAPI/internal/config"
+	"marketAPI/internal/db"
+	"marketAPI/internal/transport/rest"
+)
+
 // @title Marketplace API
 // @version 1.0
 // @description API for marketplace application
@@ -8,19 +18,16 @@
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
-package main
-
-import (
-	"log"
-	"marketAPI/internal/app"
-	"marketAPI/internal/config"
-	"marketAPI/internal/transport/rest"
-)
-
 func main() {
 	cfg, err := config.Load()
 	if err != nil {
 		log.Fatalf("Config error: %s", err)
+	}
+
+	// Применяем миграции
+	err = db.ApplyMigrations(cfg.DB.DSN())
+	if err != nil {
+		log.Fatalf("Migrations error: %s", err)
 	}
 
 	// Инициализация приложения

@@ -1,5 +1,7 @@
 package domain
 
+import "time"
+
 type ErrorResponse struct {
 	Error string `json:"error"`
 }
@@ -13,4 +15,11 @@ type AdResponse struct {
 	Page     int  `json:"page"`
 	PageSize int  `json:"page_size"`
 	Total    int  `json:"total"`
+}
+
+type HealthCheckResponse struct {
+	Status    string            `json:"status"`
+	Version   string            `json:"version"`
+	Services  map[string]string `json:"services"`
+	Timestamp time.Time         `json:"timestamp"`
 }

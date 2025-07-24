@@ -11,11 +11,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-/*type adHandlers struct {
-	adService   *ad.Service
-	authService *auth.Service
-}*/
-
 func getUserIdFromToken(c echo.Context) (int, error) {
 	user, ok := c.Get("user").(*jwt.Token)
 	if !ok {

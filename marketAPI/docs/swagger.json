@@ -291,6 +291,32 @@
                     }
                 }
             }
+        },
+        "/health": {
+            "get": {
+                "description": "Возвращает статус работы API и подключения к БД",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "service"
+                ],
+                "summary": "Проверка работоспособности сервиса",
+                "responses": {
+                    "200": {
+                        "description": "Сервис работает",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {

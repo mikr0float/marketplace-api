@@ -14,7 +14,8 @@ func (h *Handlers) SetupRoutes(e *echo.Echo) {
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
 
-	// Swagger
+	// Public routes
+	e.GET("/health", h.HealthCheck)
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	// Auth routes
@@ -31,7 +32,4 @@ func (h *Handlers) SetupRoutes(e *echo.Echo) {
 	protectedAdGroup := adGroup.Group("")
 	protectedAdGroup.Use(h.AuthMiddleware())
 	protectedAdGroup.POST("", h.CreateAd)
-	protectedAuthGroup := e.Group("")
-	protectedAuthGroup.Use(h.AuthMiddleware())
-	protectedAuthGroup.POST("/ads", h.CreateAd)
 }

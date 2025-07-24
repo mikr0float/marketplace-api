@@ -6,6 +6,7 @@ import (
 	"log"
 	"marketAPI/internal/db"
 	"marketAPI/internal/domain"
+	"strings"
 
 	"github.com/gocraft/dbr/v2"
 	"golang.org/x/crypto/bcrypt"
@@ -14,12 +15,6 @@ import (
 type UserRepository struct {
 	storage *db.PostgresStorage
 }
-
-/*type UserRepository interface {
-	Create(user *domain.User) error
-	GetByUsername(username string) (*domain.User, error)
-	Exists(username string) (bool, error)
-}*/
 
 func NewUserRepository(storage *db.PostgresStorage) *UserRepository {
 	return &UserRepository{storage: storage}
@@ -107,4 +102,26 @@ func (r *UserRepository) Exists(ctx context.Context, username string) (bool, err
 	}
 
 	return exists, err
+}
+
+func (r *UserRepository) PingDB(ctx context.Context) error {
+	sess, err := r.storage.NewSession(ctx)
+	if err != nil {
+		log.Printf("Failed to start session: %v", err)
+		return err
+	}
+	var result int
+
+	err = sess.Select("1").
+		From("users").
+		Limit(1).
+		LoadOne(&result)
+	if err != nil {
+		// Если таблицы нет - это тоже "доступная БД"
+		if strings.Contains(err.Error(), "relation \"users\" does not exist") {
+			return nil
+		}
+		return err
+	}
+	return nil
 }
